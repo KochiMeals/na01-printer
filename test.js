@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 
 url = "https://km-kterm-01.ddpl.xyz/print"
 
-data = fs.readFileSync('./samples/PROD01.prn');
+data = fs.readFileSync('./samples/PROD02.prn');
 print_data = Buffer.from(data).toString('base64');
 
 async function run() {
