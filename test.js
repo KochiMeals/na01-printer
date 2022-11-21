@@ -14,11 +14,12 @@ async function run() {
 			print_data 
 		}),
 		headers: {
-			'Authorization': process.env.AUTH_KEY,
+			'Authorization': "Bearer " + process.env.AUTH_KEY,
 			'Content-Type': 'application/json',
 		}
 	});
 	const response = await request.json();
+	console.log(response);
 }
 
 run();
