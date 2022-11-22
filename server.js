@@ -2,6 +2,7 @@ require('dotenv').config()
 var lp = require("node-lp");
 const express = require('express')
 var pkginfo = require('pkginfo')(module);
+const Handlebars = require('handlebars');
 
 const app = express()
 app.use(express.json());
@@ -29,8 +30,16 @@ app.get('/', async (req, res) => {
 	})
 })
 app.post('/print', verifyToken, (req, res) => {
-	data = Buffer.from(req.body.print_data, 'base64');
-	printer.queue(data, () => {
+	print_data = Buffer.from(req.body.print_data, 'base64');
+	printer.queue(print_data, () => {
+		res.send({success: true, "message": "Printed"})
+	});
+})
+app.post('/print-template', verifyToken, (req, res) => {
+	var source_template_ht = fs.readFileSync('./templates/' + req.body.template_filename, 'utf8');
+	var template = Handlebars.compile(source_template_ht);
+	var print_data = template(req.body.template.data);
+	printer.queue(print_data, () => {
 		res.send({success: true, "message": "Printed"})
 	});
 })

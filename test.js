@@ -2,10 +2,9 @@ require('dotenv').config()
 const fs = require('fs')
 const fetch = require('node-fetch')
 
-url = "https://km-kterm-01.ddpl.xyz/print"
+url = "https://km-kterm-01.ddpl.xyz/prints"
 
-data = fs.readFileSync('./samples/PROD02.prn');
-print_data = Buffer.from(data).toString('base64');
+// print_data = Buffer.from(data).toString('base64');
 
 async function run() {
 	const request = await fetch(url, {
