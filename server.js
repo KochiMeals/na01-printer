@@ -69,7 +69,7 @@ app.post('/print-template', verifyToken, async (req, res) => {
 	var template = Handlebars.compile(source_template_ht);
 	var print_data = await template(req.body.template.data);
 	printer.queue(print_data, () => {
-		res.send({ success: true, "message": "Printed", print_data})
+		res.send({ success: true, "message": "Printed", print_data: Buffer.from(print_data).toString('base64')})
 	});
 })
 
