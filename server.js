@@ -43,18 +43,18 @@ app.get('/', (req, res) => {
 })
 app.get('/templates/:filename', (req, res) => {
 
-	var variables = {};
+	var data = {};
 	fs.readFileSync('./templates/' + req.params.filename, 'utf8').match(/\{\{\s+[\w\.]+\s+\}\}/g).forEach((variable) => {
 		variable_name = variable.replace('{{', '').replace('}}', '').trim();
-		_.set(variables, variable_name, "Data");
+		_.set(data, variable_name, "Data");
 	})
 	// _.forEach(variables_array, function (value, key) {
 	// 	_.set(variables, key, value[]);
 	// });
 	res.send({
 		template: {
-			name: req.params.filename,
-			variables
+			filename: req.params.filename,
+			data
 		}
 	})
 })
@@ -65,7 +65,7 @@ app.post('/print', verifyToken, (req, res) => {
 	});
 })
 app.post('/print-template', verifyToken, (req, res) => {
-	var source_template_ht = fs.readFileSync('./templates/' + req.body.template_filename, 'utf8');
+	var source_template_ht = fs.readFileSync('./templates/' + req.body.template.filename, 'utf8');
 	var template = Handlebars.compile(source_template_ht);
 	var print_data = template(req.body.template.data);
 	printer.queue(print_data, () => {
