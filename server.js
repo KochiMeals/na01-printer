@@ -1,11 +1,15 @@
+// Env
 require('dotenv').config()
-var lp = require("node-lp");
+
+// Requires
 const fs = require('fs')
+var _ = require('lodash')
+var lp = require("node-lp")
 const express = require('express')
 var pkginfo = require('pkginfo')(module);
-var _ = require('lodash');
 const Handlebars = require('handlebars');
 
+// Init
 const app = express()
 app.use(express.json());
 const port = process.env.HTTP_PORT ?? 8000
@@ -14,12 +18,14 @@ printer = lp({
 	destination: process.env.PRINTER
 });
 
+// Middleware
 const verifyToken = (req, res, next) => {
 	if ((req.headers.authorization || "").split(' ')[1] == process.env.AUTH_KEY)
 		next();
 	else
 		res.status(403).send({ result: false, error: "Unauthorized", });
 };
+
 
 app.get('/', (req, res) => {
 	res.send({
@@ -31,26 +37,15 @@ app.get('/', (req, res) => {
 		},
 		templates: fs.readdirSync('./templates/')
 			.map(function (fileName) {
-				var source_template_ht = fs.readFileSync('./templates/' + fileName, 'utf8');
-				var template = Handlebars.compile(source_template_ht);
-				return {
-					name: fileName,
-					info_url: req.protocol + "://" + req.headers.host + '/templates/' + fileName,
-					
-				};
+				return { name: fileName, info_url: req.protocol + "://" + req.headers.host + '/templates/' + fileName, };
 			})
 	})
 })
 app.get('/templates/:filename', (req, res) => {
-
 	var data = {};
 	fs.readFileSync('./templates/' + req.params.filename, 'utf8').match(/\{\{\s+[\w\.]+\s+\}\}/g).forEach((variable) => {
-		variable_name = variable.replace('{{', '').replace('}}', '').trim();
-		_.set(data, variable_name, "Data");
+		_.set(data, variable.replace('{{', '').replace('}}', '').trim(), "Data");
 	})
-	// _.forEach(variables_array, function (value, key) {
-	// 	_.set(variables, key, value[]);
-	// });
 	res.send({
 		template: {
 			filename: req.params.filename,
@@ -67,9 +62,9 @@ app.post('/print', verifyToken, (req, res) => {
 app.post('/print-template', verifyToken, async (req, res) => {
 	var source_template_ht = fs.readFileSync('./templates/' + req.body.template.filename, 'utf8');
 	var template = Handlebars.compile(source_template_ht);
-	var print_data = await template(req.body.template.data);
+	var print_data = await template(req.body.template.data)
 	printer.queue(print_data, () => {
-		res.send({ success: true, "message": "Printed", print_data: Buffer.from(print_data).toString('base64')})
+		res.send({ success: true, "message": "Printed", })
 	});
 })
 
