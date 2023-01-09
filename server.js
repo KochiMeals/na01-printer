@@ -67,7 +67,7 @@ app.post('/print-template', verifyToken, async (req, res) => {
 
 function execPrint(payload, res) {
 	var uuid = uuidv4()
-	var path = './tmp/' + uuid
+	var path = __dirname + '/tmp/' + uuid
 	fs.writeFile(path, payload, (err) => {
 		if(err)
 			res.send({ success: false, "message": err })
@@ -78,5 +78,5 @@ function execPrint(payload, res) {
 }
 
 app.listen(port, host, () => {
-	console.log(`Example app listening on port ${port}`)
+	console.log(`Example app listening on port ${port} with cwd of ${__dirname}`)
 })
