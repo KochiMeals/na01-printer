@@ -6,8 +6,9 @@ const fs = require('fs')
 var _ = require('lodash')
 var lp = require("node-lp")
 const express = require('express')
-var pkginfo = require('pkginfo')(module);
-const Handlebars = require('handlebars');
+const { v4: uuidv4 } = require('uuid')
+var pkginfo = require('pkginfo')(module)
+const Handlebars = require('handlebars')
 
 // Init
 const app = express()
@@ -54,19 +55,27 @@ app.get('/templates/:filename', (req, res) => {
 	})
 })
 app.post('/print', verifyToken, (req, res) => {
-	print_data = Buffer.from(req.body.print_data, 'base64');
-	printer.queue(print_data, () => {
-		res.send({ success: true, "message": "Printed" })
-	});
+	print_data = Buffer.from(req.body.print_data, 'base64')
+	execPrint(print_data, res)
 })
 app.post('/print-template', verifyToken, async (req, res) => {
 	var source_template_ht = fs.readFileSync('./templates/' + req.body.template.filename, 'utf8');
 	var template = Handlebars.compile(source_template_ht);
 	var print_data = await template(req.body.template.data)
-	printer.queue(print_data, () => {
-		res.send({ success: true, "message": "Printed", })
-	});
+	execPrint(print_data, res)
 })
+
+function execPrint(payload, res) {
+	var uuid = uuidv4()
+	var path = './tmp/' + uuid
+	fs.writeFile(path, payload, (err) => {
+		if(err)
+			res.send({ success: false, "message": err })
+		printer.queue(path, () => {
+			res.send({ success: true, "message": "Printed" })
+		});
+	});
+}
 
 app.listen(port, host, () => {
 	console.log(`Example app listening on port ${port}`)
