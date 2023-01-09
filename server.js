@@ -67,7 +67,7 @@ app.post('/print-template', verifyToken, async (req, res) => {
 
 function execPrint(payload, res) {
 	var uuid = uuidv4()
-	var path = __dirname + '/tmp/' + uuid
+	var path = __dirname + '/tmp/' + uuid;
 	fs.writeFile(path, payload, (err) => {
 		if(err)
 			res.send({ success: false, "message": err })
