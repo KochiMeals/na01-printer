@@ -1,0 +1,59 @@
+<xpml><page quantity='0' pitch='25.0 mm'></xpml>
+SIZE 101.3 mm, 25 mm
+DIRECTION 0,0
+REFERENCE 0,0
+OFFSET 0 mm
+SET PEEL OFF
+SET CUTTER OFF
+SET PARTIAL_CUTTER OFF
+<xpml></page></xpml>
+{{#each items as |item index|}}
+{{#if_even index}}
+<xpml><page quantity='1' pitch='25.0 mm'></xpml>
+SET TEAR ON
+CLS
+CODEPAGE 1252
+
+BAR 535,165,285,4
+BAR 535,135,430,4
+BAR 535,105,285,4
+BAR 535,075,430,4
+
+BAR 535,0,8,200
+
+TEXT 805,190,"2",180,1,1,"{{ item.line1 }}"
+TEXT 805,160,"2",180,1,1,"{{ item.line2 }}"
+TEXT 805,130,"2",180,1,1,"{{ item.line3 }}"
+TEXT 805,100,"2",180,1,1,"{{ item.line4 }}"
+
+TEXT 805,065,"5",180,1,1,"{{ item.vhline1 }}"
+
+TEXT 525,190,"5",180,1,1,"{{ item.hline1 }}"
+TEXT 525,130,"5",180,1,1,"{{ item.hline2 }}"
+TEXT 525,070,"5",180,1,1,"{{ item.hline3 }}"
+
+{{else}}
+
+BAR 105,165,285,4
+BAR 105,135,430,4
+BAR 105,105,285,4
+BAR 105,075,430,4
+
+BAR 105,0,8,200
+
+TEXT 375,190,"2",180,1,1,"{{ item.line1 }}"
+TEXT 375,160,"2",180,1,1,"{{ item.line2 }}"
+TEXT 375,130,"2",180,1,1,"{{ item.line3 }}"
+TEXT 375,100,"2",180,1,1,"{{ item.line4 }}"
+
+TEXT 375,065,"5",180,1,1,"{{ item.vhline1 }}"
+
+TEXT 95,190,"5",180,1,1,"{{ item.hline1 }}"
+TEXT 95,130,"5",180,1,1,"{{ item.hline2 }}"
+TEXT 95,070,"5",180,1,1,"{{ item.hline3 }}"
+
+PRINT 1,1
+<xpml></page></xpml>
+{{/if_even}}
+{{/each}}
+<xpml><end/></xpml>

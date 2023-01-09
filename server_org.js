@@ -4,8 +4,7 @@ require('dotenv').config()
 // Requires
 const fs = require('fs')
 var _ = require('lodash')
-// var lp = require("node-lp")
-var printer = require('@thiagoelg/node-printer')
+var lp = require("node-lp")
 const express = require('express')
 const { v4: uuidv4 } = require('uuid')
 var pkginfo = require('pkginfo')(module)
@@ -16,23 +15,9 @@ const app = express()
 app.use(express.json());
 const port = process.env.HTTP_PORT ?? 8000
 const host = process.env.HTTP_HOST ?? '127.0.0.1'
-// printer = lp({
-// 	destination: process.env.PRINTER
-// });
-
-//HandlebarJS Logic
-Handlebars.registerHelper('if_even', function (conditional, options) {
-	if ((conditional % 2) == 0) {
-		return options.fn(this);
-	} else {
-		return options.inverse(this);
-	}
+printer = lp({
+	destination: process.env.PRINTER
 });
-// Handlebars.registerHelper('if_even', function (conditional, options) {
-// 	if ((conditional % 2) == 0) {
-// 		return options.fn(this);
-// 	}
-// });
 
 // Middleware
 const verifyToken = (req, res, next) => {
@@ -57,6 +42,18 @@ app.get('/', (req, res) => {
 			})
 	})
 })
+app.get('/templates/:filename', (req, res) => {
+	var data = {};
+	fs.readFileSync('./templates/' + req.params.filename, 'utf8').match(/\{\{\s+[\w\.]+\s+\}\}/g).forEach((variable) => {
+		_.set(data, variable.replace('{{', '').replace('}}', '').trim(), "Data");
+	})
+	res.send({
+		template: {
+			filename: req.params.filename,
+			data
+		}
+	})
+})
 app.post('/print', verifyToken, (req, res) => {
 	print_data = Buffer.from(req.body.print_data, 'base64')
 	execPrint(print_data, res)
@@ -64,52 +61,22 @@ app.post('/print', verifyToken, (req, res) => {
 app.post('/print-template', verifyToken, async (req, res) => {
 	var source_template_ht = fs.readFileSync('./templates/' + req.body.template.filename, 'utf8');
 	var template = Handlebars.compile(source_template_ht);
-	items = req.body.template.data.items;
-	if(items.length % 2 == 1){
-		last_item = {};
-		Object.keys(items[items.length - 1]).forEach((key) => {
-			last_item[key] = "EOF";
-		})
-		items.push(last_item);
-	}
-	var print_data = await template({items});
+	var print_data = await template(req.body.template.data);
+	// console.log("BP1"); console.log(print_data); console.log("BP2");
 	execPrint(print_data, res)
-})
-app.post('/show-template', verifyToken, async (req, res) => {
-	var source_template_ht = fs.readFileSync('./templates/' + req.body.template.filename, 'utf8');
-	var template = Handlebars.compile(source_template_ht);
-	items = req.body.template.data.items;
-	if(items.length % 2 == 1){
-		last_item = {};
-		Object.keys(items[items.length - 1]).forEach((key) => {
-			last_item[key] = "EOF";
-		})
-		items.push(last_item);
-	}
-	var print_data = await template({items});
-	res.send(print_data);
+	// console.log("BP3");
 })
 
 function execPrint(payload, res) {
 	var uuid = uuidv4()
 	var path = __dirname + '/tmp/' + uuid;
+	// console.log("BP4"); console.log(path); console.log("BP5");
 	fs.writeFile(path, payload, (err) => {
-		if (err) {
-			res.send({ success: false, message: err })
-		} else {
-			printer.printDirect({
-				data: fs.readFileSync(path),
-				printer: process.env.PRINTER,
-				success: function (jobID) {
-					console.log("sent to printer with ID: " + jobID);
-					res.send({ success: true, message: "Printed", job_id: jobID })
-				},
-				error: function (err) {
-					console.log(err);
-					res.send({ success: false, message: err });
-				}
-			});
-		}
+		if(err)
+			res.send({ success: false, "message": err })
+		printer.queue(path, () => {
+			res.send({ success: true, "message": "Printed" })
+		});
 	});
 }
 
