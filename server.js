@@ -76,7 +76,7 @@ async function render_payload(req) {
 	var template = Handlebars.compile(source_template_ht);
 	items = req.body.template.data.items;
 	shift_x = req.body.template.shift_x ?? 0;
-	if (req.body.template.add_eof == true) {
+	if ((req.body.template.add_eof ?? false) == true) {
 		if (items.length % 2 == 1) {
 			last_item = {};
 			Object.keys(items[items.length - 1]).forEach(key => {
