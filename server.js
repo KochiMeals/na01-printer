@@ -6,7 +6,7 @@ const fs = require("fs");
 var _ = require("lodash");
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
-// var pkginfo = require("pkginfo")(module);
+var pkginfo = require("pkginfo")(module);
 const Handlebars = require("handlebars");
 
 // Init
@@ -60,6 +60,15 @@ app.post("/print", verifyToken, (req, res) => {
 	execPrint(print_data, res);
 });
 app.post("/print-template", verifyToken, async (req, res) => {
+	var print_data = render_payload(req);
+	execPrint(print_data, res);
+});
+app.post("/show-template", verifyToken, async (req, res) => {
+	var print_data = render_payload(req);
+	res.send(print_data);
+});
+
+async function render_payload(req) {
 	var source_template_ht = fs.readFileSync(
 		"./templates/" + req.body.template.filename,
 		"utf8"
@@ -67,34 +76,17 @@ app.post("/print-template", verifyToken, async (req, res) => {
 	var template = Handlebars.compile(source_template_ht);
 	items = req.body.template.data.items;
 	shift_x = req.body.template.shift_x ?? 0;
-	if (items.length % 2 == 1) {
-		last_item = {};
-		Object.keys(items[items.length - 1]).forEach(key => {
-			last_item[key] = "EOF";
-		});
-		items.push(last_item);
+	if (req.body.template.add_eof == true) {
+		if (items.length % 2 == 1) {
+			last_item = {};
+			Object.keys(items[items.length - 1]).forEach(key => {
+				last_item[key] = "EOF";
+			});
+			items.push(last_item);
+		}
 	}
-	var print_data = await template({ items, shift_x });
-	execPrint(print_data, res);
-});
-app.post("/show-template", verifyToken, async (req, res) => {
-	var source_template_ht = fs.readFileSync(
-		"./templates/" + req.body.template.filename,
-		"utf8"
-	);
-	var template = Handlebars.compile(source_template_ht);
-	items = req.body.template.data.items;
-	if (items.length % 2 == 1) {
-		last_item = {};
-		Object.keys(items[items.length - 1]).forEach(key => {
-			last_item[key] = "EOF";
-		});
-		items.push(last_item);
-	}
-	var print_data = await template({ items });
-	res.send(print_data);
-});
-
+	return await template({ items, shift_x });
+}
 function execPrint(payload, res) {
 	var uuid = uuidv4();
 	var path = __dirname + "/tmp/" + uuid;
