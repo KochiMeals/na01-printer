@@ -1,17 +1,17 @@
+{{#each items as |item index|}}
+
+CLS
+
 GAP 2.25 mm
 SIZE 52.10 mm, 25 mm
 DIRECTION 0,0
 REFERENCE 0,0
-SHIFT 0,{{ shift_x }}
+
 OFFSET 0 mm
 SET PEEL OFF
 SET CUTTER OFF
 SET PARTIAL_CUTTER OFF
 CODEPAGE 1252
-
-{{#each items as |item index|}}
-
-CLS
 
 BAR 304,0, 3, 199
 BAR 305,148, 118, 3
