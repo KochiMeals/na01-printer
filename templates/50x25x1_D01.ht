@@ -2,7 +2,7 @@ GAP 2.25 mm
 SIZE 52.10 mm, 25 mm
 DIRECTION 0,0
 REFERENCE 0,0
-SHIFT {{ shift_x }}
+SHIFT 0,{{ shift_x }}
 OFFSET 0 mm
 SET PEEL OFF
 SET CUTTER OFF
