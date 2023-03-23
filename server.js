@@ -66,6 +66,7 @@ app.post("/print-template", verifyToken, async (req, res) => {
 	);
 	var template = Handlebars.compile(source_template_ht);
 	items = req.body.template.data.items;
+	shift_x = req.body.template.shift_x ?? 0;
 	if (items.length % 2 == 1) {
 		last_item = {};
 		Object.keys(items[items.length - 1]).forEach(key => {
@@ -73,7 +74,7 @@ app.post("/print-template", verifyToken, async (req, res) => {
 		});
 		items.push(last_item);
 	}
-	var print_data = await template({ items });
+	var print_data = await template({ items, shift_x });
 	execPrint(print_data, res);
 });
 app.post("/show-template", verifyToken, async (req, res) => {
