@@ -1,0 +1,24 @@
+SIZE 101.10 mm, 45 mm
+DIRECTION 0,0
+REFERENCE 0,0
+OFFSET 0 mm
+SET PEEL OFF
+SET CUTTER OFF
+SET PARTIAL_CUTTER OFF
+
+{{#each items as |item index|}}
+
+SET TEAR ON
+CLS
+CODEPAGE 1252
+TEXT 784,343,"ROMAN.TTF",180,1,12,"{{ item.line1 }}"
+TEXT 784,301,"ROMAN.TTF",180,1,12,"{{ item.line2 }}"
+TEXT 784,259,"ROMAN.TTF",180,1,12,"{{ item.line3 }}"
+TEXT 784,217,"ROMAN.TTF",180,1,12,"{{ item.line4 }}"
+TEXT 784,174,"ROMAN.TTF",180,1,12,"{{ item.line5 }}"
+TEXT 784,132,"ROMAN.TTF",180,1,12,"{{ item.line6 }}"
+TEXT 784,090,"ROMAN.TTF",180,1,12,"{{ item.line7 }}"
+TEXT 784,046,"ROMAN.TTF",180,1,12,"{{ item.line8 }}"
+PRINT 1,1
+
+{{/each}}
