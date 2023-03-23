@@ -16,11 +16,11 @@ BAR 305,100, 118, 3
 BAR 305,52, 118, 3
 CODEPAGE 1252
 TEXT 299,192,"2",180,1,1,"{{ item.line1 }}"
-TEXT 410,131,"4",180,1,1,AA$
+TEXT 410,131,"4",180,1,1,"{{ item.line1 }}"
 TEXT 410,91,"4",180,1,1,"NVCC"
 TEXT 410,35,"4",180,1,1,"NVCC"
 TEXT 299,162,"2",180,1,1,"{{ item.line1 }}"
-TEXT 299,132,"2",180,1,1,AB$
+TEXT 299,132,"2",180,1,1,"{{ item.line1 }}"
 BAR 20,168, 285, 3
 BAR 20,138, 285, 3
 BAR 19,107, 285, 3
@@ -32,14 +32,6 @@ TEXT 191,44,"2",180,1,1,"{{ item.line1 }}"
 BAR 19,49, 175, 3
 BAR 19,21, 175, 3
 TEXT 191,16,"1",180,1,1,"{{ item.line1 }}"
-EOP
-AA$="{{ item.line1 }}"
-AB$="{{ item.line1 }}"
-SIZE 52.10 mm, 25 mm
-SET TEAR ON
-CLS
-RUN "FORM_0.BAS"
 PRINT 1,1
-KILL "FORM_0.BAS"
 
 {{/each}}
