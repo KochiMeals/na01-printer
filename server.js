@@ -32,6 +32,7 @@ Handlebars.registerHelper("if_even", function (conditional, options) {
 		return options.inverse(this);
 	}
 });
+
 const verifyToken = (req, res, next) => {
 	if ((req.headers.authorization || "").split(" ")[1] == process.env.AUTH_KEY)
 		next();
