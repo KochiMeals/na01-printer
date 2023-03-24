@@ -61,11 +61,11 @@ app.post("/print", verifyToken, (req, res) => {
 	execPrint(print_data, res);
 });
 app.post("/print-template", verifyToken, async (req, res) => {
-	var print_data = render_payload(req);
+	var print_data = await render_payload(req);
 	execPrint(print_data, res);
 });
 app.post("/show-template", verifyToken, async (req, res) => {
-	var print_data = render_payload(req);
+	var print_data = await render_payload(req);
 	res.send(print_data);
 });
 
