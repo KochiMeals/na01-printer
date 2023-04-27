@@ -1,7 +1,9 @@
 <xpml><page quantity='0' pitch='25.0 mm'></xpml>
+GAP 0,0
 SIZE 50 mm, 5mm
 DIRECTION 0,0
 REFERENCE 0,0
+DENSITY 15
 OFFSET 0 mm
 SET PEEL OFF
 SET CUTTER OFF
