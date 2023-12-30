@@ -15,7 +15,7 @@ SET TEAR ON
 CLS
 CODEPAGE 1252
 BAR 390,0,8,25
-TEXT 380,25,"3",180,1,1,"{{ item.line1 }}"
+TEXT 380,25,"3",180,1,1,"{{{ item.line1 }}}"
 BAR 0,0,8,25
 PRINT 1,1
 <xpml></page></xpml>
