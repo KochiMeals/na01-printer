@@ -1,6 +1,6 @@
 {
 	"name": "na01-printer",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "Prints to label printer",
 	"main": "server.js",
 	"scripts": {
